@@ -1,5 +1,7 @@
+import os
 from flask_app.config.mysqlconnection import connectToMySQL
-from flask import flash
+from flask_app import app
+from flask import json
 
 class Topping:
     db_name ="pizzatime"
@@ -11,13 +13,12 @@ class Topping:
         self.toppings = data['toppings']
         self.toppings_count = data['toppings_count']
         self.quantity = data['quantity']
-        self.favorite = data['favorite']
         self.user_id = data['user_id']
         self.created_at = data['created_at']
 
     @classmethod
     def save(cls,data):
-        query ="INSERT INTO topping (method,size,crust,toppings,toppings_count,quantity,favorite,user_id, created_at) values (%(method)s,%(size)s,%(crust)s,%(toppings)s,%(toppings_count)s,%(quantity)s,'False',%(user_id)s, NOW());"
+        query ="INSERT INTO topping (method,size,crust,toppings,toppings_count,quantity,user_id, created_at) values (%(method)s,%(size)s,%(crust)s,%(toppings)s,%(toppings_count)s,%(quantity)s,%(user_id)s, NOW());"
         return connectToMySQL(cls.db_name).query_db(query,data)
 
     @classmethod
@@ -45,4 +46,30 @@ class Topping:
         query = "DELETE FROM topping where id = %(id)s;"
         return connectToMySQL(cls.db_name).query_db(query,data)
 
+    @staticmethod
+    def calculate_total(data):
 
+        total = 0.0
+
+        filename = os.path.join(app.static_folder, 'json', 'settings.json')
+        f = open(filename)
+        json_data = json.load(f)
+        f.close()
+
+        if(data['size'] == "Large"):
+            total += json_data['price_large']
+        elif(data['size'] == "Medium"):
+            total += json_data['price_med']
+        elif(data['size'] == "Small"):
+            total += json_data['price_small']
+
+        total += data['toppings_count'] * json_data['price_toppings']
+
+        total *= int(data['quantity'])
+
+        if(data['method'] == "Delivery"):
+            total += json_data['price_delivery']
+
+        total = round(total, 2)
+
+        return total

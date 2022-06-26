@@ -1,5 +1,5 @@
 import os
-from flask import render_template,redirect,session,request,json
+from flask import render_template,redirect,session,request,json, url_for
 from flask_app import app
 from flask_app.models.user import User
 from flask_app.models.topping import Topping
@@ -23,3 +23,38 @@ def dashboard():
                             topping=Topping.get_topping_user(data), 
                             toppings_veg=json_data['toppings_veg'],
                             toppings_meat=json_data['toppings_meat'])
+
+@app.route('/new_pizza', methods=['POST'])
+def new_pizza():
+    toppings = ", ".join(request.form.getlist('toppings'))
+    data = {
+        'method': request.form['method'],
+        'size': request.form['size'],
+        'crust': request.form['crust'],
+        'toppings': toppings,
+        'toppings_count': len(request.form.getlist('toppings')),
+        'quantity': request.form['quantity'],
+        'user_id': session['user_id']
+    }
+
+    session['order'] = data
+
+    return redirect(url_for('confirm_order'))
+
+@app.route('/confirm/')
+def confirm_order():
+
+    total = Topping.calculate_total(session['order'])
+
+    return render_template('confirm_order.html', order=session['order'], total = total)
+
+@app.route('/create_pizza', methods=['POST'])
+def create_pizza():
+    Topping.save(session['order'])
+    session['order'] = ""
+    return redirect('/dashboard')
+
+@app.route('/cancel_order')
+def cancel_order():
+    session['order'] = ""
+    return redirect('/dashboard')
