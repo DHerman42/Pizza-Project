@@ -18,7 +18,10 @@ def register():
         "first_name": request.form['first_name'],
         "last_name": request.form['last_name'],
         "email": request.form['email'],
-        "password": bcrypt.generate_password_hash(request.form['password'])
+        "password": bcrypt.generate_password_hash(request.form['password']),
+        "address": request.form['address'],
+        "city": request.form['city'],
+        "state": request.form['state']
     }
     id = User.save(data)
     session['user_id'] = id
@@ -26,16 +29,19 @@ def register():
     return redirect('/dashboard')
 
 
-@app.route('/login',methods=['POST'])
+@app.route("/login", methods=['POST'])
 def login():
-    user = User.get_email(request.form)
-    if not user:
-        flash("Invalid Email","login")
+    data = {
+        'email': request.form['email'],
+        'password': request.form['password']
+    }
+
+    user_in_db = User.validate_login(data)
+
+    if not user_in_db:
         return redirect('/')
-    if not bcrypt.check_password_hash(user.password, request.form['password']):
-        flash("Invalid Password","login")
-        return redirect('/')
-    session['user_id'] = user.id
+    else:
+        session['user_id'] = user_in_db['id']
     return redirect('/dashboard')
 
 
@@ -47,11 +53,6 @@ def dashboard():
         'id': session['user_id']
     }
     return render_template("dashboard.html",user=User.get_id(data), topping=Topping.get_topping_user(data))
-
-
-
-
-
 
 
 @app.route('/logout')

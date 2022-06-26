@@ -1,4 +1,4 @@
-from flask_app.models.mysqlconnection import connectToMySQL
+from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash
 
 class Topping:
@@ -9,7 +9,6 @@ class Topping:
         self.size = data['size']
         self.crust = data['crust']
         self.toppings = data['toppings']
-        self.price = data['price']
         self.user_id = data['user_id']
 
     @classmethod

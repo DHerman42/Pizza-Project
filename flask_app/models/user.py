@@ -1,6 +1,11 @@
-from flask_app.config import connectToMySQL
+from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash
+from flask_bcrypt import Bcrypt
+from flask_app import app
+import re
+
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
+bcrypt = Bcrypt(app)
 
 class User:
     db_name ="pizzatime" # named the database after our group project assignement
@@ -10,6 +15,7 @@ class User:
         self.last_name = data['last_name']
         self.email = data['email']
         self.password = data['password']
+        self.address = data['address']
         self.city = data['city']
         self.state = data['state']
 
@@ -53,22 +59,45 @@ class User:
         return connectToMySQL(cls.db_name).query_db(query,data)
 
     @staticmethod
-    def validate(user):
+    def validate_registration(user):
         is_valid = True
         query = "SELECT * FROM users WHERE email = %(email)s;"
-        results = connectToMySQL(User.db_name).query_db(query,user)
-        if len(user['email']) < 1:
-            flash("Please enter an email", "register")
+        email = connectToMySQL(User.db_name).query_db(query,user)
+        if len(user['first_name']) < 3:
+            flash("First name must be at least 3 characters", "register_first_name")
+            is_valid = False
+        if len(user['last_name']) < 3:
+            flash("Last name must be at least 3 characters", "register_last_name")
+            is_valid = False
+        if not EMAIL_REGEX.match(user['email']):
+            flash("Invalid Email! Enter valid email","register_email")
             is_valid=False
-        elif not EMAIL_REGEX.match(user['email']):
-            flash("Invalid Email! Enter valid email","register")
-            is_valid=False
+        elif not len(email) == 0:
+            flash("Email is already entered", "register_email")
+            is_valid = False
         if len(user['password']) < 8:
-            flash("Password must be at least 8 characters", "register")
+            flash("Password must be at least 8 characters", "register_password")
             is_valid=False
         if (user['password']) != user["confirm_password"]:
-            flash("Password does not match")
+            flash("Password does not match", "register_confirm")
             is_valid=False
         return is_valid
 
-
+    @staticmethod
+    def validate_login(data):
+        is_valid = True
+        query = "SELECT * FROM users WHERE email = %(email)s;"
+        results = connectToMySQL(User.db_name).query_db(query, data)
+        if len(results) > 0:
+            user = results[0]
+            print(user)
+        if len(results) == 0:
+            flash("No matching email", "login_email")
+            is_valid = False
+        elif not bcrypt.check_password_hash(user['password'], data['password']):
+            flash("Incorrect password entered", "login_password")
+            is_valid = False
+        if is_valid:
+            return user
+        else: 
+            return is_valid
