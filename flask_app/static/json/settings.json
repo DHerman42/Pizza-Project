@@ -1,0 +1,8 @@
+{
+    "price_small": 6.99,
+    "price_med": 8.99,
+    "price_large": 10.99,
+    "price_toppings": 2.00,
+    "toppings_veg": ["Green Peppers", "Mushrooms", "Onions", "Black Olives", "Tomatoes", "Jalapenos", "Pineapple"],
+    "toppings_meat": ["Pepperoni", "Sausage", "Ham", "Bacon", "Ground Beef", "Chicken"]
+}

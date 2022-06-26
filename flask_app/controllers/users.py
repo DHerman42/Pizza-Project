@@ -1,8 +1,7 @@
-from flask import render_template,redirect,session,request, flash
+from flask import render_template,redirect,session,request
 from flask_app import app
 from flask_bcrypt import Bcrypt
 from flask_app.models.user import User
-from flask_app.models.topping import Topping
 bcrypt = Bcrypt(app)
 
 @app.route('/')
@@ -43,16 +42,6 @@ def login():
     else:
         session['user_id'] = user_in_db['id']
     return redirect('/dashboard')
-
-
-@app.route('/dashboard')
-def dashboard():
-    if 'user_id' not in session:
-        return redirect('/logout')
-    data ={
-        'id': session['user_id']
-    }
-    return render_template("dashboard.html",user=User.get_id(data), topping=Topping.get_topping_user(data))
 
 
 @app.route('/logout')
