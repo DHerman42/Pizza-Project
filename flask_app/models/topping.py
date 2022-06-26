@@ -9,11 +9,15 @@ class Topping:
         self.size = data['size']
         self.crust = data['crust']
         self.toppings = data['toppings']
+        self.toppings_count = data['toppings_count']
+        self.quantity = data['quantity']
+        self.favorite = data['favorite']
         self.user_id = data['user_id']
+        self.created_at = data['created_at']
 
     @classmethod
     def save(cls,data):
-        query ="INSERT INTO topping (method,size,crust,toppings,quantity,price,user_id) values (%(method)s,%(size)s,%(crust)s,%(toppings)s,%(quantity)s,%(price)s,%(user_id)s);"
+        query ="INSERT INTO topping (method,size,crust,toppings,toppings_count,quantity,favorite,user_id, created_at) values (%(method)s,%(size)s,%(crust)s,%(toppings)s,%(toppings_count)s,%(quantity)s,'False',%(user_id)s, NOW());"
         return connectToMySQL(cls.db_name).query_db(query,data)
 
     @classmethod
@@ -35,10 +39,6 @@ class Topping:
             print(topping['id'])
             all_toppings.append( cls(topping) )
         return all_toppings
-
-    @classmethod
-    def update(cls,data):
-        query = "UPDATE topping SET method=%(method)s, size=%(size)s, crust=%(crust)s, toppings=%(toppings)s, quantity=%(quantity)s, price=%(price)s;"
 
     @classmethod
     def destroy(cls,data):
