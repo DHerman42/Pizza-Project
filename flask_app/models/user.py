@@ -21,7 +21,7 @@ class User:
 
     @classmethod
     def save(cls,data):
-        query = "INSERT INTO user (first_name,last_name.email,password,city,state) VALUES (%(first_name)s,%(last_name)s,%(email)s,%(password)s,%(city)s,%(state)s);"
+        query = "INSERT INTO user (first_name,last_name,email,password,address,city,state) VALUES (%(first_name)s,%(last_name)s,%(email)s,%(password)s,%(address)s,%(city)s,%(state)s);"
         return connectToMySQL(cls.db_name).query_db(query,data)
 
     @classmethod
@@ -50,7 +50,7 @@ class User:
     def get_id(cls,data):
         query = "SELECT * FROM user where id = %(id)s;"
         results = connectToMySQL(cls.db_name).query_db(query,data)
-        return cls(results[0])
+        return results[0]
 
 
     @classmethod
@@ -61,7 +61,7 @@ class User:
     @staticmethod
     def validate_registration(user):
         is_valid = True
-        query = "SELECT * FROM users WHERE email = %(email)s;"
+        query = "SELECT * FROM user WHERE email = %(email)s;"
         email = connectToMySQL(User.db_name).query_db(query,user)
         if len(user['first_name']) < 3:
             flash("First name must be at least 3 characters", "register_first_name")
@@ -86,7 +86,7 @@ class User:
     @staticmethod
     def validate_login(data):
         is_valid = True
-        query = "SELECT * FROM users WHERE email = %(email)s;"
+        query = "SELECT * FROM user WHERE email = %(email)s;"
         results = connectToMySQL(User.db_name).query_db(query, data)
         if len(results) > 0:
             user = results[0]
