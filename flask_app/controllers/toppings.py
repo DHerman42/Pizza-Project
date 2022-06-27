@@ -20,10 +20,9 @@ def dashboard():
     
     return render_template("dashboard.html",
                             user=User.get_id(data), 
-                            topping=Topping.get_topping_user(data), 
+                            order=Topping.get_topping_user(data), 
                             toppings_veg=json_data['toppings_veg'],
-                            toppings_meat=json_data['toppings_meat'],
-                            order=Topping.get_all())
+                            toppings_meat=json_data['toppings_meat'])
 
 @app.route('/new_pizza', methods=['POST'])
 def new_pizza():
@@ -40,9 +39,9 @@ def new_pizza():
 
     session['order'] = data
 
-    return redirect(url_for('confirm_order'))
+    return redirect('/confirm_order')
 
-@app.route('/confirm/')
+@app.route('/confirm')
 def confirm_order():
 
     total = Topping.calculate_total(session['order'])
@@ -61,27 +60,33 @@ def cancel_order():
     return redirect('/dashboard')
 
 
-@app.route('/update_user/<int:id>', methods = ['POST'])
-def update_user(id):
-    
-    data = {
-        "first_name": request.form['first_name'],
-        "last_name": request.form['last_name'],
-        "address": request.form['address'],
-        "city": request.form['city'],
-        "state": request.form['state'],
-        "id":id
-    }
-    
-    session['user_id'] = id
-    User.edit_user(data)
-    
-    return redirect('/dashboard')
+@app.route('/delete/<int:id>')
+def delete_pizza(id):
+    data = {'id': id }
+    pizza = Topping.get_by_id(data)
 
-@app.route('/edit_user/<int:id>')
-def edit_user(id):
-    data = {
-        "id" : id
+    if(pizza['user_id'] == session['user_id']):
+        Topping.destroy(data)
+        return redirect('/dashboard')
+    else:
+        return redirect('/')
+
+
+@app.route('/reorder/<int:id>')
+def reorder(id):
+    data = {'id': id }
+    pizza = Topping.get_by_id(data)
+
+    reorder_data = {
+        'method': pizza['method'],
+        'size': pizza['size'],
+        'crust': pizza['crust'],
+        'toppings': pizza['toppings'],
+        'toppings_count': pizza['toppings_count'],
+        'quantity': pizza['quantity'],
+        'user_id': session['user_id']
     }
-    
-    return render_template('edit_user.html', this_user = User.get_id(data))
+
+    session['order'] = reorder_data
+
+    return redirect(url_for('confirm_order'))

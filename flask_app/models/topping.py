@@ -32,8 +32,14 @@ class Topping:
         return all_toppings
 
     @classmethod
+    def get_by_id(cls, data):
+        query = "SELECT * FROM topping WHERE id = %(id)s"
+        results = connectToMySQL(cls.db_name).query_db(query, data)
+        return results[0]
+
+    @classmethod
     def get_topping_user(cls,data):
-        query = "SELECT * from topping LEFT JOIN user on user.id = topping.user_id where user.id = %(id)s;"
+        query = "SELECT * from topping LEFT JOIN user on user.id = topping.user_id where user.id = %(id)s ORDER BY created_at DESC;"
         results = connectToMySQL(cls.db_name).query_db(query,data)
         all_toppings = []
         for topping in results:

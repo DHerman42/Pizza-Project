@@ -44,6 +44,29 @@ def login():
     return redirect('/dashboard')
 
 
+@app.route('/edit_user')
+def edit_user():
+    data = {"id" : session['user_id']}
+    return render_template('edit_user.html', this_user = User.get_id(data))
+
+
+@app.route('/update_user', methods = ['POST'])
+def update_user():
+    
+    data = {
+        "first_name": request.form['first_name'],
+        "last_name": request.form['last_name'],
+        "address": request.form['address'],
+        "city": request.form['city'],
+        "state": request.form['state'],
+        "id":request.form['id']
+    }
+    
+    User.edit_user(data)
+    
+    return redirect('/dashboard')
+
+
 @app.route('/logout')
 def logout():
     session.clear()

@@ -13,7 +13,10 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
             <h1 class="navbar-brand">Pizza Time</h1>
-            <a href="/edit_user/{{user.id}}" class="btn btn-outline-primary">Update your info</a>
+            <div>
+                <a href="/edit_user" class="btn btn-outline-primary">Update your info</a>
+                <a href="/logout" class="btn btn-outline-danger ms-3">Logout</a>
+            </div>
         </div>
     </nav>
     <div class="container">
@@ -81,7 +84,7 @@
                     </div>
                     <div class="card-body past-card">
                         {% for order in order %}
-                            <div class="card mt-3">
+                            <div class="card mb-3">
                                 <div class="card-header">
                                     {{order.created_at.strftime('%m/%d/%Y')}}
                                 </div>
@@ -90,6 +93,10 @@
                                     <p>Crust: {{order.crust}}</p>
                                     <p>Toppings: {{order.toppings}}</p>
                                     <p>Quantity: {{order.quantity}}</p>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a href="/reorder/{{order.id}}" class="btn btn-sm btn-outline-success">Reorder</a>
+                                    <a href="/delete/{{order.id}}" class="btn btn-sm btn-outline-danger">Delete</a>
                                 </div>
                             </div>
                         {% endfor %}

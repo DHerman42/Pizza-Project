@@ -12,7 +12,10 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
             <h1 class="navbar-brand">Pizza Time</h1>
-            <a href="/dashboard" class="btn btn-outline-primary">Home</a>
+            <div>
+                <a href="/dashboard" class="btn btn-outline-primary">Home</a>
+                <a href="/logout" class="btn btn-outline-danger ms-3">Logout</a>
+            </div>
         </div>
     </nav>
     <div class="container">
@@ -21,7 +24,8 @@
                 <h5>Edit your information</h5>
             </div>
             <div class="card-body">
-                <form action="/update_user/{{this_user.id}}" method="post">
+                <form action="/update_user" method="post">
+                    <input type="hidden" name="id" id="id" value="{{this_user.id}}">
                     <div class="form-group">
                         <label for="first_name">First Name:</label>
                         <input class="form-control" type="text" name="first_name" id="first_name" value="{{this_user.first_name}}">
