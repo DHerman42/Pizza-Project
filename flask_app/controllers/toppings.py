@@ -60,11 +60,10 @@ def cancel_order():
     session['order'] = ""
     return redirect('/dashboard')
 
-# coming back to this
 
 @app.route('/update_user/<int:id>', methods = ['POST'])
 def update_user(id):
-    # need to put something here
+    
     data = {
         "first_name": request.form['first_name'],
         "last_name": request.form['last_name'],
@@ -74,7 +73,7 @@ def update_user(id):
         "id":id
     }
     
-    session['user_id'] = data
+    session['user_id'] = id
     User.edit_user(data)
     
     return redirect('/dashboard')
