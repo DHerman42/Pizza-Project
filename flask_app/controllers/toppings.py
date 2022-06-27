@@ -22,7 +22,8 @@ def dashboard():
                             user=User.get_id(data), 
                             topping=Topping.get_topping_user(data), 
                             toppings_veg=json_data['toppings_veg'],
-                            toppings_meat=json_data['toppings_meat'])
+                            toppings_meat=json_data['toppings_meat'],
+                            order=Topping.get_all())
 
 @app.route('/new_pizza', methods=['POST'])
 def new_pizza():
@@ -58,3 +59,30 @@ def create_pizza():
 def cancel_order():
     session['order'] = ""
     return redirect('/dashboard')
+
+# coming back to this
+
+# @app.route('/update_user/<int:id>', methods = ['POST'])
+# def update_user(id):
+#     # need to put something here
+#     data = {
+#         "first_name": request.form['first_name'],
+#         "last_name": request.form['last_name'],
+#         "email": request.form['email'],
+#         "password": bcrypt.generate_password_hash(request.form['password']),
+#         "address": request.form['address'],
+#         "city": request.form['city'],
+#         "state": request.form['state']
+#     }
+    
+#     session['user_id'] = data
+    
+#     return redirect(url_for('edit_user'))
+
+# @app.route('/edit_user/<int:id>')
+# def edit_user(id):
+#     data = {
+#         "id" : id
+#     }
+    
+#     return render_template('edit_user.html', Topping.save(data))

@@ -73,6 +73,22 @@
                 </div>
             </div>
             <div class="col-4">
+                <div class="card bg-light mt-4">
+                    <div class="card-header">
+                        <h5>Past Orders</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for order in order %}
+                            <div class="card-group justify-content-center mt-3">
+                                <p>Size: {{order.size}}</p>
+                                <p>Crust: {{order.crust}}</p>
+                                <p>Toppings: {{order.toppings}}</p>
+                                <p>Quantity: {{order.quantity}}</p>
+                                <p>Total: {{order.total}}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
 
             </div>
         </div>
