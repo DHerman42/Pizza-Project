@@ -17,7 +17,7 @@ def dashboard():
     f = open(filename)
     json_data = json.load(f)
     f.close()
-
+    
     return render_template("dashboard.html",
                             user=User.get_id(data), 
                             topping=Topping.get_topping_user(data), 
@@ -62,27 +62,27 @@ def cancel_order():
 
 # coming back to this
 
-# @app.route('/update_user/<int:id>', methods = ['POST'])
-# def update_user(id):
-#     # need to put something here
-#     data = {
-#         "first_name": request.form['first_name'],
-#         "last_name": request.form['last_name'],
-#         "email": request.form['email'],
-#         "password": bcrypt.generate_password_hash(request.form['password']),
-#         "address": request.form['address'],
-#         "city": request.form['city'],
-#         "state": request.form['state']
-#     }
+@app.route('/update_user/<int:id>', methods = ['POST'])
+def update_user(id):
+    # need to put something here
+    data = {
+        "first_name": request.form['first_name'],
+        "last_name": request.form['last_name'],
+        "address": request.form['address'],
+        "city": request.form['city'],
+        "state": request.form['state'],
+        "id":id
+    }
     
-#     session['user_id'] = data
+    session['user_id'] = data
+    User.edit_user(data)
     
-#     return redirect(url_for('edit_user'))
+    return redirect('/dashboard')
 
-# @app.route('/edit_user/<int:id>')
-# def edit_user(id):
-#     data = {
-#         "id" : id
-#     }
+@app.route('/edit_user/<int:id>')
+def edit_user(id):
+    data = {
+        "id" : id
+    }
     
-#     return render_template('edit_user.html', Topping.save(data))
+    return render_template('edit_user.html', this_user = User.get_id(data))
