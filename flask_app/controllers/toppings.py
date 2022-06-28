@@ -41,7 +41,7 @@ def new_pizza():
 
     return redirect('/confirm_order')
 
-@app.route('/confirm')
+@app.route('/confirm_order')
 def confirm_order():
 
     total = Topping.calculate_total(session['order'])
